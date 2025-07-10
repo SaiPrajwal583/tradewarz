@@ -1,4 +1,5 @@
 // index.js
+import { login , register , signout , change_password } from "./routes/auth"
 const fastify = require('fastify')({ logger: true })
 
 fastify.get('/', async (request, reply) => {
