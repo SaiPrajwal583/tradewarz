@@ -1,20 +1,49 @@
-const fs = require('fs')
-function login(){
+function authorize(request, reply){
+    if (request.method === 'POST'){
+        const {action, username , password} = request.body;
+        if (!username || !password){
+            return reply.status(400).send('Username and password are required');
+        }
+        let users = JSON.parse(fs.readFileSync('users.json'));
 
-}
-function register(){
+        if(action === 'register'){
+            const exists = users.some(u => u.username === username);
+            if (exists) {
+                return reply.status(400).send('Username already exists');
+            }
+            const hashed = crypto.createHash('sha256').update(password).digest('hex');
+            users.push({ username, password: hashed });
+            fs.writeFileSync('user.json', JSON.stringify(users, null, 4));
+            request.session.user = username;
+            return reply.redirect('/dashboard');
 
-}
-function signout(){
-    request.destroySession(err) => {
-        if err
+
+        }
+        if(action === "login"){
+            const hashed = crypto.createHash('sha256').update(password).digest('hex');
+            const user = users.find(u => u.username === username);
+            if (user && user.password === hashed) {
+                request.session.user = username;
+                return reply.redirect('/dashboard');
+            }
+            return reply.status(401).send('Invalid credentials');
+
+        }
+    const message = request.query.message;
+    return reply.view('auth', { message });
+    
+
     }
+
+}
+function signout(request, reply){
+    reply.clearCookie('sessionId', { path: '/' });
+    reply.redirect("/auth?message=Signed Out");
 }
 function change_password(request , reply){
     if (request.method === 'POST'){
-        const {username , password ,newPass, confirmPass } = request.body;
-    }
-    if (!username || !newPass || password || confirmPass){
+        const {username,newPass, confirmPass } = request.body;
+        if (!username || !newPass || confirmPass){
         return reply.status(400).send('All feilds are required.');
     }
     if (newPass !== confirmPass){
@@ -42,4 +71,6 @@ function change_password(request , reply){
         }
 
         return reply.redirect('/auth?message=Password updated successfully. Please log in.');
+    }
+    
     }
