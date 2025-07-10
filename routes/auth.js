@@ -78,3 +78,7 @@ function change_password(request , reply){
     }
     
     }
+module.exports = {
+    authorize,
+    change_password
+}
