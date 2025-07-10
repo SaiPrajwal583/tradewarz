@@ -2,7 +2,7 @@
 const fastify = require('fastify')({ logger: true })
 
 fastify.get('/', async (request, reply) => {
-  return { hello: 'world' }
+  return { hello: 'hello world' }
 })
 
 fastify.listen({ port: 3000 }, (err, address) => {
