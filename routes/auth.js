@@ -12,7 +12,11 @@ function authorize(request, reply){
                 return reply.status(400).send('Username already exists');
             }
             const hashed = crypto.createHash('sha256').update(password).digest('hex');
-            users.push({ username, password: hashed });
+            users.push({
+                username,
+                password: hashed,
+                rating: 600
+            });
             fs.writeFileSync('user.json', JSON.stringify(users, null, 4));
             request.session.user = username;
             return reply.redirect('/dashboard');
