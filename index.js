@@ -11,7 +11,7 @@ fastify.register(fastifySession, {
   cookie: { secure: false }, // set to true in production with HTTPS
   saveUninitialized: false
 });
-cron.schedule('*/5 * * * *', () => {
+cron.schedule('*/25 * * * *', () => {
   processMatches();
 }); 
 
